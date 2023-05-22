@@ -9,6 +9,7 @@
   } from '@ant-design/icons';
   import { Button, Collapse, Layout, Menu, theme } from 'antd';
   import { useState } from 'react';
+  import { Link, Outlet } from 'react-router-dom';
   const { Header, Sider, Content } = Layout;
   const Home = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -41,7 +42,7 @@
       getItem('商品分类', '4-3'),
     ]),
       getItem('订单管理', '5', <AppstoreOutlined />, [
-      getItem('订单列表', '5-1'),
+      getItem('订单列表', '5-1', <Link to={'/order'} />),
     ])
   ]
     return (
@@ -82,7 +83,7 @@
               background: colorBgContainer,
             }}
           >
-            Content
+            <Outlet />
           </Content>
         </Layout>
       </Layout>
