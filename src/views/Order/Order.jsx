@@ -1,9 +1,10 @@
 
 import { useState } from 'react';
 import style from './Order.module.css'
-import { Input, Space, Table, Button, Popover, Tag, Image, Tooltip, Modal, Form, Select, message, Timeline } from 'antd';
+import { Input, Space, Table, Button, Popover, Tag, Image, Tooltip, Modal, Form, Cascader, message, Timeline } from 'antd';
 import { SettingFilled, EditOutlined } from '@ant-design/icons'
 import pig from '../../assets/imgs/pig.png'
+import options from './citydata'
 
 
 const { Search } = Input;
@@ -54,7 +55,10 @@ const Order = () => {
     const handleCancel2 = () => {
         setIsOpen(false);
     };
-
+    //地址选择器
+    const onChange = (value) => {
+        console.log(value);
+      };
 
 
     //外层表格相关数据-------------------------------------------------------------------------------------------------
@@ -130,9 +134,9 @@ const Order = () => {
                                         { required: true, message: '请选择省市区/县!' }
                                     ]}
                                 >
-                                    <Select placeholder="请选择">
-
-                                    </Select>
+                                    <Cascader placeholder="请选择" options={options} onChange={onChange}>
+                                        
+                                    </Cascader>
                                 </Form.Item>
 
                                 <Form.Item
@@ -182,7 +186,7 @@ const Order = () => {
             },
         },
     ];
-//外层表格数据
+    //外层表格数据
     const data = [
         {
             key: 1,
