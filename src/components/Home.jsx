@@ -9,6 +9,9 @@
   } from '@ant-design/icons';
   import { Button, Collapse, Layout, Menu, theme } from 'antd';
   import { useState } from 'react';
+import { Link, Outlet } from 'react-router-dom';
+
+
   const { Header, Sider, Content } = Layout;
   const Home = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -29,7 +32,7 @@
       getItem('欢迎页', '1-1',<UserOutlined />),
     ]),
       getItem('用户管理', '2', <UploadOutlined />, [
-        getItem('用户列表', '2-1',<UserOutlined />)
+        getItem('用户列表', '2-1',<Link to={'/user/list'}/>)
     ]),
       getItem('权限管理', '3', <UserOutlined />, [
       getItem('角色列表', '3-1'),
@@ -82,7 +85,7 @@
               background: colorBgContainer,
             }}
           >
-            Content
+            <Outlet/>
           </Content>
         </Layout>
       </Layout>
