@@ -1,10 +1,12 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import style from './Order.module.css'
-import { Input, Space, Table, Button, Popover, Tag, Image, Tooltip, Modal, Form, Cascader, message, Timeline } from 'antd';
+import { Input, Space, Table, Button, Popover, Tag, Image, Tooltip, Modal, Form, Cascader, Timeline, Pagination } from 'antd';
 import { SettingFilled, EditOutlined } from '@ant-design/icons'
 import pig from '../../assets/imgs/pig.png'
 import options from './citydata'
+//引入接口
+import { ordersList } from '../../api/order'
 
 
 const { Search } = Input;
@@ -33,6 +35,38 @@ const Order = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     //打开物流信息的状态
     const [isOpen, setIsOpen] = useState(false);
+
+
+    //拉取订单列表数据-------表格外层数据内容
+    const [orderlistdata, setOrderListData] = useState([])
+    const [pagetotal, setPageTotal] = useState()
+    const initOrderData = () => {
+        ordersList().then((res) => {
+            if (res.status === 200) {
+                //添加了key属性的订单列表数据
+                res.data.data.goods.forEach((item, index) => {
+                    item.key = index + 1
+                })
+                setOrderListData(res.data.data.goods)
+                setPageTotal(res.data.data.total)
+                // //订单编号
+                // console.log(res.data.data.goods[0].order_number)
+                // //订单价格
+                // console.log(res.data.data.goods[0].order_price)
+                // //是否付款
+                // console.log(res.data.data.goods[0].pay_status)
+                // //是否发货
+                // console.log(res.data.data.goods[0].is_send)
+                // //下单时间
+                // console.log(res.data.data.goods[0].update_time)
+                // //收货地址
+
+            }
+        })
+    }
+    useEffect(initOrderData, [])
+
+
     //点击搜索按钮（放大镜）后触发的事件
     const onSearch = (value) => {
         //从后端拉订单编号的数据，filter匹配是否与value相等，相等就把订单编号以及其他相关数据渲染到页面中
@@ -58,8 +92,14 @@ const Order = () => {
     //地址选择器
     const onChange = (value) => {
         console.log(value);
-      };
+    };
+    //更改页码时
+    // const changePage = (page, pageSize) => {
+    //     ordersList(page, pageSize).then((res) => {
 
+    //     })
+            
+    // }
 
     //外层表格相关数据-------------------------------------------------------------------------------------------------
     //表头
@@ -71,31 +111,34 @@ const Order = () => {
         },
         {
             title: '订单编号',
-            dataIndex: 'ordernumber',
-            key: 'ordernumber',
+            dataIndex: 'order_number',
+            key: 'order_number',
         },
         {
             title: '订单价格(元)',
-            dataIndex: 'price',
-            key: 'price',
+            dataIndex: 'order_price',
+            key: 'order_price',
         },
         {
             title: '是否付款',
-            dataIndex: 'pay',
-            key: 'pay',
-            render: () => (
-                true ? <Tag color="success">已付款</Tag> : <Tag color="error">未付款</Tag>
+            dataIndex: 'pay_status',
+            key: 'pay_status',
+            render: (_, record) => (
+                record.pay_status === '1' ? <Tag color="success">已付款</Tag> : <Tag color="error">未付款</Tag>
             )
         },
         {
             title: '是否发货',
-            dataIndex: 'send',
-            key: 'send',
+            dataIndex: 'is_send',
+            key: 'is_send',
         },
         {
             title: '下单时间',
-            dataIndex: 'time',
-            key: 'time',
+            dataIndex: 'create_time',
+            key: 'create_time',
+            render: (_, record) => {
+                return (record.create_time)
+            }
         },
         {
             title: '操作',
@@ -135,7 +178,7 @@ const Order = () => {
                                     ]}
                                 >
                                     <Cascader placeholder="请选择" options={options} onChange={onChange}>
-                                        
+
                                     </Cascader>
                                 </Form.Item>
 
@@ -186,41 +229,7 @@ const Order = () => {
             },
         },
     ];
-    //外层表格数据
-    const data = [
-        {
-            key: 1,
-            ordernumber: 'g7kmck6rmjauimx8v',
-            price: 32,
-            pay: true,
-            send: '是',
-            time: '2023-5-22 12:35:19',
-        },
-        {
-            key: 2,
-            ordernumber: 'g7kmck6rmjauimx8v',
-            price: 32,
-            pay: false,
-            send: '是',
-            time: '2023-5-22 12:35:19',
-        },
-        {
-            key: 3,
-            ordernumber: 'g7kmck6rmjauimx8v',
-            price: 32,
-            pay: true,
-            send: '是',
-            time: '2023-5-22 12:35:19',
-        },
-        {
-            key: 4,
-            ordernumber: 'g7kmck6rmjauimx8v',
-            price: 32,
-            pay: false,
-            send: '是',
-            time: '2023-5-22 12:35:19',
-        },
-    ];
+
     //内层表格相关数据 标题栏
     const columns2 = [
         {
@@ -299,8 +308,6 @@ const Order = () => {
         },
     ]
 
-
-
     //order组件结构部分
     return (
         <div>
@@ -314,6 +321,7 @@ const Order = () => {
                 className={style.search}
             />
             <Table
+                style={{ overflow: 'auto', height: 450 }}
                 size="small"
                 columns={columns}
                 expandable={{
@@ -327,8 +335,17 @@ const Order = () => {
                         />
                     ),
                 }}
-                dataSource={data}
+                dataSource={orderlistdata}
                 bordered
+                pagination={false}
+            />
+            <Pagination
+                style={{ marginTop: '30px' }}
+                // onChange={changePage}
+                total={pagetotal}
+                showSizeChanger
+                showQuickJumper
+                showTotal={(total) => `Total ${total} items`}
             />
         </div>
     )
