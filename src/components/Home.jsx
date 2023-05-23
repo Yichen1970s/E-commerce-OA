@@ -44,7 +44,7 @@ import { Link, Outlet } from 'react-router-dom';
       getItem('商品分类', '4-3'),
     ]),
       getItem('订单管理', '5', <AppstoreOutlined />, [
-      getItem('订单列表', '5-1'),
+      getItem('订单列表', '5-1', <Link to={'/order'} />),
     ])
   ]
     return (
@@ -85,7 +85,7 @@ import { Link, Outlet } from 'react-router-dom';
               background: colorBgContainer,
             }}
           >
-            <Outlet/>
+            <Outlet />
           </Content>
         </Layout>
       </Layout>

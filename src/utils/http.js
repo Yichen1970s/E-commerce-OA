@@ -9,8 +9,8 @@ const instance = axios.create({
 // 添加请求拦截器
 instance.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
-  const userInfo = store.getState((state) => state.user.userInfo)
-  config.headers.authorization = userInfo.user.userInfo.token
+  const userInfo=store.getState((state)=>state.user.userInfo)
+  config.headers.authorization=userInfo.token
   return config
 }, function (error) {
   // 对请求错误做些什么
@@ -38,7 +38,7 @@ const http = {
     return instance.put(url, data, config)
   },
   patch(url, data, config) {
-    return instance.put(url, data, config)
+    return instance.patch(url, data, config)
   },
   delete(url, data, config) {
     return instance.delete(url, { data }, config)
