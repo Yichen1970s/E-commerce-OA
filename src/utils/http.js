@@ -10,7 +10,8 @@ const instance = axios.create({
 instance.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
   const userInfo=store.getState((state)=>state.user.userInfo)
-  config.headers.authorization=userInfo.token
+ 
+  config.headers.authorization=userInfo.user.userInfo.token
   return config
 }, function (error) {
   // 对请求错误做些什么
