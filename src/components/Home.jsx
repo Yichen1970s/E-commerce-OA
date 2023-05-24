@@ -1,9 +1,9 @@
 
 import style from './Home.module.css'
-import { Outlet } from 'react-router-dom';
-import { Link } from 'react-router-dom'
-
-
+import { Button, Layout, Menu, theme } from "antd";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { Link, Outlet } from 'react-router-dom';
 import {
   MenuFoldOutlined,
   UploadOutlined,
@@ -12,10 +12,6 @@ import {
   MenuUnfoldOutlined,
   AppstoreOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, Menu, theme } from "antd";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { Link, Outlet } from 'react-router-dom';
 
 
 const { Header, Sider, Content } = Layout;
@@ -48,7 +44,7 @@ const Home = () => {
       getItem(<Link to={'rights/permissionlist'}>权限列表</Link>, '3-2'),
     ]),
     getItem('商品管理', '4', <VideoCameraOutlined />, [
-      getItem('商品列表', '4-1'),
+      getItem(<Link to={'good'}>商品列表</Link>, '4-1'),
       getItem('分类参数', '4-2'),
       getItem('商品分类', '4-3'),
     ]),
@@ -97,7 +93,6 @@ const Home = () => {
         >
           <Outlet />
         </Content>
-        <Outlet/>
       </Layout>
     </Layout>
   );
