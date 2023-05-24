@@ -3,6 +3,9 @@ import Login from '../components/Login.jsx'
 import Home from '../components/Home.jsx'
 import UserList from '../components/RightsManagement/UserList.jsx'
 import PermissionList from '../components/RightsManagement/PermissionList.jsx'
+import GoodList from "../components/goods/GoodList.jsx";
+import GoodUpdate from "../components/goods/GoodUpdate.jsx";
+import GoodAdd from "../components/goods/GoodAdd.jsx";
 export const routes=[
     {
         path:'/',
@@ -15,14 +18,27 @@ export const routes=[
             {
                 path: 'rights/permissionlist',
                 element: <PermissionList />
-            }
+          },
+          {
+            path: "good",
+            element: <GoodList></GoodList>,
+          },
+          {
+            path: "good/add",
+            element: <GoodAdd></GoodAdd>,
+          },
+          {
+            path: "good/update",
+            element: <GoodUpdate></GoodUpdate>,
+          },
         ]
     },
     {
         path:'/login',
         element: <Login/>
-    },
-    
+    },   
 ]
-const router=createBrowserRouter(routes)
-export default router
+
+const router = createBrowserRouter(routes);
+export default router;
+

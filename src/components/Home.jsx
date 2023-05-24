@@ -1,18 +1,28 @@
+
 import style from './Home.module.css'
 import { Outlet } from 'react-router-dom';
 import { Link } from 'react-router-dom'
+
+
 import {
   MenuFoldOutlined,
   UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
   MenuUnfoldOutlined,
-  AppstoreOutlined
-} from '@ant-design/icons';
-import { Button, Collapse, Layout, Menu, theme } from 'antd';
-import { useState } from 'react';
+  AppstoreOutlined,
+} from "@ant-design/icons";
+import { Button, Layout, Menu, theme } from "antd";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { Link, Outlet } from 'react-router-dom';
+
+
 const { Header, Sider, Content } = Layout;
+
 const Home = () => {
+  const userInfo = useSelector((state) => state.user.userInfo);
+  console.log(userInfo);
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer },
@@ -82,10 +92,12 @@ const Home = () => {
             padding: 24,
             minHeight: 280,
             background: colorBgContainer,
+            overflow:'auto'
           }}
         >
           <Outlet />
         </Content>
+        <Outlet/>
       </Layout>
     </Layout>
   );
