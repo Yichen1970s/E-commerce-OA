@@ -9,9 +9,10 @@ export default defineConfig({
       localsConvention: 'camelCase'
     }
   },
-  server: {
-    port: 8000,
-    proxy: {
+
+  server:{
+    port:8000,
+    proxy:{
       '/api': {
         target: 'http://www.tangxiaoyang.vip:8888/api/v2',
         changeOrigin: true,

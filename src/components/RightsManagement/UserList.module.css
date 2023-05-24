@@ -4,3 +4,8 @@
     margin-bottom: 20px;
 }
 
+.foot-btn{
+    display: flex;
+    justify-content: end;
+}
+
