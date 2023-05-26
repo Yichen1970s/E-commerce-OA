@@ -1,51 +1,144 @@
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import style from './Order.module.css'
-import { Input, Space, Table, Button, Popover, Tag, Image, Tooltip, Modal, Form, Cascader, message, Timeline } from 'antd';
+import { Input, Space, Table, Button, Popover, Tag, Image, Tooltip, Modal, Form, Cascader, Timeline, Pagination } from 'antd';
 import { SettingFilled, EditOutlined } from '@ant-design/icons'
 import pig from '../../assets/imgs/pig.png'
 import options from './citydata'
+//引入接口
+import { ordersList, ordersDetail, orderLogisticsInfo } from '../../api/order'
 
 
 const { Search } = Input;
 //物流信息时间轴数据
-const logisticsinfo = [
-    {
-        children: (
-            <>
-                <p>物流信息数据</p>
-                <p>时间</p>
-            </>
-        ),
-    },
-    {
-        children: 'Solve initial network problems 2015-09-01',
-    },
-    {
-        children: 'Technical testing 2015-09-01',
-    },
-    {
-        children: 'Network problems being solved 2015-09-01',
-    },
-]
+
 const Order = () => {
     //打开修改收货地址的状态
     const [isModalOpen, setIsModalOpen] = useState(false);
     //打开物流信息的状态
     const [isOpen, setIsOpen] = useState(false);
+
+
+    //拉取订单列表数据-------表格外层数据内容
+    // const [alldata, setAllData] = useState([])
+    const [orderlistdata, setOrderListData] = useState([])
+    const [pagetotal, setPageTotal] = useState()
+    //物流信息
+    const [kuaidi, setKuaiDi] = useState([])
+    //更改页码时，发送get请求所携带的参数data
+    const [pnum, setPnum] = useState(1)
+    const [psize, setPsize] = useState(10)
+    const [data, setData] = useState({ query: '', pagenum: 1, pagesize: 10 })
+    const [orderDetail, setOrderDetail] = useState([]) //某个id的订单详情数据，传入订单id  order_id
+    const obj = useRef({ query: '', pagenum: 1, pagesize: 10 })
+    const initOrderData = () => {
+        ordersList(data).then((res) => {
+            if (res.status === 200) {
+                //添加了key属性的订单列表数据
+                res.data.data.goods.forEach((item, index) => {
+                    item.key = index + 1
+                })
+                setOrderListData(res.data.data.goods)
+                setPageTotal(res.data.data.total)
+            }
+        })
+    }
+    useEffect(initOrderData, [])
+    //更改页码时
+    const changePage = (num, size) => { //参数改变后的页码和每页条数
+        setPnum(num) //当前页数
+        setPsize(size)  //当前每页条数
+        console.log(num, size)
+        setData({ query: '', pagenum: num, pagesize: size })
+        obj.current = { query: '', pagenum: num, pagesize: size }
+        console.log(data)
+        //带着新的data发送请求
+        ordersList(obj.current).then((res) => {
+            console.log(data)
+            if (res.status === 200) {
+                res.data.data.goods.forEach((item, index) => {
+                    item.key = index + 1
+                })
+                setOrderListData(res.data.data.goods)
+            }
+        })
+    }
+
     //点击搜索按钮（放大镜）后触发的事件
     const onSearch = (value) => {
-        //从后端拉订单编号的数据，filter匹配是否与value相等，相等就把订单编号以及其他相关数据渲染到页面中
-        console.log(value)
+        //请求所有数据
+        ordersList().then((res) => {
+            if (res.status === 200) {
+                //添加了key属性的订单列表数据
+                res.data.data.goods.forEach((item, index) => {
+                    item.key = index + 1
+                })
+            }
+            if (value) {
+                setOrderListData(res.data.data.goods.filter((item) => item.order_number === value))
+            }
+            else {
+                initOrderData()
+            }
+        })
     };
-    // const [form] = Form.useForm()
+        const fun1=(id)=>{
+            console.log(id);
+            ordersDetail(id).then((res) => {
+                if (res.status === 200) {
+                    console.log(res.data.data.goods);
+                    return res.data.data.goods
+    
+                }
+            })
+        }
+       
+    
+    // onExpand 点击展开图标时触发的事件
+    const onExpand = (expanded, record) => { //展开状态，当前项
+        ordersDetail(record.order_id).then((res) => {
+            if (res.status === 200) {
+
+            }
+        })
+
+
+    }
+
     //点击显示修改地址
     const showModal = () => {
         setIsModalOpen(true);
     };
     //点击按钮显示物流信息
-    const showModal2 = () => {
-        setIsOpen(true);
+    const showModal2 = (order_id) => {
+        return () => {
+            setIsOpen(true);
+            console.log(order_id)
+            orderLogisticsInfo(order_id).then((res) => {
+                if (res.data.meta.status === 200) {
+                    //里面的每一项放到kuaidi的每一项中
+                    // setKuaiDi(res.data.data.map((item, index) => {
+                        
+                        // <p>{item.time}</p>
+                    // }))
+                   const data= res.data.data.map(item=>{
+                        return {
+                            children:(
+                                <>
+                                <div>{item.context}</div>
+                                <p>{item.time}</p>
+                                </>            
+                                )}
+                    })
+                    setKuaiDi(data)
+                    console.log(data);
+                    console.log(res.data.data)
+
+                }
+            })
+        }
+        // console.log(record)
+
     }
     //点x关闭修改地址
     const handleCancel = () => {
@@ -58,8 +151,7 @@ const Order = () => {
     //地址选择器
     const onChange = (value) => {
         console.log(value);
-      };
-
+    };
 
     //外层表格相关数据-------------------------------------------------------------------------------------------------
     //表头
@@ -71,37 +163,40 @@ const Order = () => {
         },
         {
             title: '订单编号',
-            dataIndex: 'ordernumber',
-            key: 'ordernumber',
+            dataIndex: 'order_number',
+            key: 'order_number',
         },
         {
             title: '订单价格(元)',
-            dataIndex: 'price',
-            key: 'price',
+            dataIndex: 'order_price',
+            key: 'order_price',
         },
         {
             title: '是否付款',
-            dataIndex: 'pay',
-            key: 'pay',
-            render: () => (
-                true ? <Tag color="success">已付款</Tag> : <Tag color="error">未付款</Tag>
+            dataIndex: 'pay_status',
+            key: 'pay_status',
+            render: (_, record) => (
+                record.pay_status === '1' ? <Tag color="success">已付款</Tag> : <Tag color="error">未付款</Tag>
             )
         },
         {
             title: '是否发货',
-            dataIndex: 'send',
-            key: 'send',
+            dataIndex: 'is_send',
+            key: 'is_send',
         },
         {
             title: '下单时间',
-            dataIndex: 'time',
-            key: 'time',
+            dataIndex: 'create_time',
+            key: 'create_time',
+            render: (_, record) => {
+                return (record.create_time)
+            }
         },
         {
             title: '操作',
-            dataIndex: '',
-            key: 'x',
-            render: () => {
+            dataIndex: 'order_id',
+            key: 'order_id',
+            render: (_, record) => {
                 //操作列的两个按钮相关功能
                 return (
                     <Space>
@@ -135,7 +230,7 @@ const Order = () => {
                                     ]}
                                 >
                                     <Cascader placeholder="请选择" options={options} onChange={onChange}>
-                                        
+
                                     </Cascader>
                                 </Form.Item>
 
@@ -161,9 +256,8 @@ const Order = () => {
                             </Form>
                         </Modal>
 
-
                         <Tooltip title="查看物流信息" >
-                            <Button type="primary" style={{ background: "#ebb563" }} onClick={showModal2}>
+                            <Button type="primary" style={{ background: "#ebb563" }} onClick={showModal2(record.order_id)}>
                                 <SettingFilled />
                             </Button>
                         </Tooltip>
@@ -172,11 +266,12 @@ const Order = () => {
                             open={isOpen}
                             onCancel={handleCancel2}
                             footer={null}
-                            bodyStyle={{ height: '200px', width: '700px', marginTop: '50px' }}
+                            bodyStyle={{width: '700px',height:'auto', marginTop: '50px' }}
                             width={'750px'}
+                            height={'auto'}
                         >
                             <Timeline
-                                items={logisticsinfo}
+                                items={kuaidi}
                             />
                         </Modal>
 
@@ -186,41 +281,7 @@ const Order = () => {
             },
         },
     ];
-    //外层表格数据
-    const data = [
-        {
-            key: 1,
-            ordernumber: 'g7kmck6rmjauimx8v',
-            price: 32,
-            pay: true,
-            send: '是',
-            time: '2023-5-22 12:35:19',
-        },
-        {
-            key: 2,
-            ordernumber: 'g7kmck6rmjauimx8v',
-            price: 32,
-            pay: false,
-            send: '是',
-            time: '2023-5-22 12:35:19',
-        },
-        {
-            key: 3,
-            ordernumber: 'g7kmck6rmjauimx8v',
-            price: 32,
-            pay: true,
-            send: '是',
-            time: '2023-5-22 12:35:19',
-        },
-        {
-            key: 4,
-            ordernumber: 'g7kmck6rmjauimx8v',
-            price: 32,
-            pay: false,
-            send: '是',
-            time: '2023-5-22 12:35:19',
-        },
-    ];
+
     //内层表格相关数据 标题栏
     const columns2 = [
         {
@@ -254,8 +315,8 @@ const Order = () => {
         },
         {
             title: '商品名称',
-            dataIndex: 'goodsname',
-            key: 'goodsname',
+            dataIndex: 'goods_id',
+            key: 'goods_id',
         }, {
 
             title: '商品重量',
@@ -264,43 +325,20 @@ const Order = () => {
         },
         {
             title: '商品数量',
-            dataIndex: 'itemnum',
-            key: 'itemnum',
+            dataIndex: 'goods_number',
+            key: 'goods_number',
         },
         {
             title: '商品价格(元)',
-            dataIndex: 'itemprice',
-            key: 'itemprice',
+            dataIndex: 'goods_price',
+            key: 'goods_price',
         },
         {
             title: '总价(元)',
-            dataIndex: 'itemtotal',
-            key: 'itemtotal',
+            dataIndex: 'goods_total_price',
+            key: 'goods_total_price',
         },
     ]
-
-    //内层表格数据
-    const data2 = [
-        {
-            key: 1,
-            goodsname: '澳洲Swisse野生深海鱼油无腥味胶囊 400粒/瓶 降血糖血压降三高 海外原装进口',
-            itemweight: '100',
-            itemnum: '2',
-            itemprice: '333',
-            itemtotal: '999',
-        },
-        {
-            key: 2,
-            goodsname: '澳洲小猪',
-            itemweight: '100',
-            itemnum: '2',
-            itemprice: '333',
-            itemtotal: '999',
-        },
-    ]
-
-
-
     //order组件结构部分
     return (
         <div>
@@ -314,21 +352,34 @@ const Order = () => {
                 className={style.search}
             />
             <Table
+                style={{ overflow: 'auto', height: 450 }}
                 size="small"
                 columns={columns}
                 expandable={{
-                    expandedRowRender: () => (
+                    expandedRowRender: (record, index, indent, expanded) => (
                         <Table
                             size='small'
                             columns={columns2}
-                            dataSource={data2}
+                            dataSource={fun1(record.order_id)}
                             bordered
                             pagination={false}
                         />
                     ),
                 }}
-                dataSource={data}
+                onExpand={onExpand}
+                dataSource={orderlistdata}
                 bordered
+                pagination={false}
+            />
+            <Pagination
+                style={{ marginTop: '30px' }}
+                onChange={changePage}
+                total={pagetotal}
+                showSizeChanger
+                showQuickJumper
+                current={pnum}
+                pageSize={psize}
+                showTotal={(total) => `Total ${total} items`}
             />
         </div>
     )
