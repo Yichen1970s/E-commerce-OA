@@ -19,5 +19,5 @@ const userSlice=createSlice({
 })
 
 export const {userInfoUpdate} =userSlice.actions
-//吧counter模块的reducer方法提供出去
+//把counter模块的reducer方法提供出去
 export default userSlice.reducer
