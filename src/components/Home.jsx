@@ -40,13 +40,13 @@ const Home = () => {
       getItem('用户列表', '2-1', <UserOutlined />)
     ]),
     getItem('权限管理', '3', <UserOutlined />, [
-      getItem(<Link to={'rights/userlist'}>角色列表</Link>, '3-1'),
-      getItem(<Link to={'rights/permissionlist'}>权限列表</Link>, '3-2'),
+      getItem(<Link to={'roles'}>角色列表</Link>, '3-1'),
+      getItem(<Link to={'rights'}>权限列表</Link>, '3-2'),
     ]),
     getItem('商品管理', '4', <VideoCameraOutlined />, [
-      getItem(<Link to={'good'}>商品列表</Link>, '4-1'),
-      getItem('分类参数', '4-2'),
-      getItem('商品分类', '4-3'),
+      getItem(<Link to={'goods'}>商品列表</Link>, '4-1'),
+      getItem(<Link to={'params'}>分类参数</Link>, '4-2'),
+      getItem(<Link to={'categories'}>商品分类</Link>, '4-3'),
     ]),
     getItem('订单管理', '5', <AppstoreOutlined />, [
       getItem('订单列表', '5-1'),

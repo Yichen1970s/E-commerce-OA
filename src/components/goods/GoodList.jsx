@@ -49,12 +49,12 @@ const GoodList = () => {
           <Button
             type="primary"
             icon={<EditTwoTone twoToneColor="white" onClick={handleToUpdta(_.goods_id)} />}
-          ></Button>
+          >编辑</Button>
           <Button
             type="primary"
             danger
             icon={<DeleteTwoTone twoToneColor="white" onClick={()=>showDeleteConfirm(_.goods_id)} />}
-          ></Button>
+          >删除</Button>
         </Space>
       ),
     },
@@ -145,7 +145,7 @@ const GoodList = () => {
   //去更新页面
 const handleToUpdta=(id)=>{
    return ()=>{
-    navigate(`/good/update?id=${id}`)
+    navigate(`/goods/edit?id=${id}`)
    }
 }
   //删除提示框
@@ -189,7 +189,7 @@ const handleToUpdta=(id)=>{
   };
   const navigate=useNavigate()
   const handleMoveToAdd=()=>{
-    navigate('/good/add')
+    navigate('/goods/add')
   }
   return (
     <div>

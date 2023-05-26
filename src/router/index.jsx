@@ -1,12 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
-import Login from '../components/Login.jsx'
-import Home from '../components/Home.jsx'
-import UserList from '../components/RightsManagement/UserList.jsx'
-import PermissionList from '../components/RightsManagement/PermissionList.jsx'
+import Login from "../components/Login.jsx";
+import Home from "../components/Home.jsx";
+import UserList from "../components/power/UserList.jsx";
+import PermissionList from "../components/power/PermissionList.jsx";
 import GoodList from "../components/goods/GoodList.jsx";
 import GoodUpdate from "../components/goods/GoodUpdate.jsx";
 import GoodAdd from "../components/goods/GoodAdd.jsx";
 import WelCome from "../components/RightsManagement/WelCome.jsx";
+import GoodParam from "../components/goods/GoodParam.jsx";
+import TableTags from "../components/goods/TableTags.jsx";
+import GoodCategories from "../components/goods/GoodCategories.jsx";
 import { element } from "prop-types";
 export const routes=[
     {
@@ -36,7 +39,23 @@ export const routes=[
           {
             path: 'welcome',
             element: <WelCome/>
-          }
+          },
+          {
+            path: "goods/edit",
+            element: <GoodUpdate></GoodUpdate>,
+          },
+          {
+            path: "params",
+            element: <GoodParam></GoodParam>,
+          },
+          {
+            path: "categories",
+            element: <GoodCategories></GoodCategories>,
+          },
+          {
+            path: "test",
+            element: <TableTags></TableTags>,
+          },
         ]
     },
     {
@@ -44,7 +63,5 @@ export const routes=[
         element: <Login/>
     },   
 ]
-
 const router = createBrowserRouter(routes);
 export default router;
-

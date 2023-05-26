@@ -175,7 +175,7 @@ const GoodAdd = () => {
     console.log(formData.current);
     CreateGood(formData.current).then(res=>{
       if(res.data.meta.status===201){
-        navigate('/good')
+        navigate('/goods')
         message.success('商品添加成功')
       }else{
         message.error('商品添加失败')
@@ -198,6 +198,7 @@ const GoodAdd = () => {
           }}
         />
       </div>
+
       <div>
         <Steps
           style={{ marginBottom: "20px" }}
@@ -223,8 +224,10 @@ const GoodAdd = () => {
             },
           ]}
         />
-        <div className={style.contentBox}>
-          <Steps
+
+      
+      <div style={{display:'flex'}}>
+        <Steps
             style={{ width: "120px", height: "350px" }}
             progressDot
             current={currentFrom}
@@ -251,7 +254,7 @@ const GoodAdd = () => {
               },
             ]}
           />
-          <div style={{ flex: 1 }}>
+        <div style={{flex:1}}>
             {/* ==================进程1*/}
             <Form
               style={{
@@ -441,10 +444,15 @@ const GoodAdd = () => {
               
             </div>
             {/* ======================进程5 */}
-          </div>
         </div>
+
       </div>
+
+
+      </div>
+
     </div>
+
   );
 };
 export default GoodAdd;

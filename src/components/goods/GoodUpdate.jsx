@@ -237,7 +237,7 @@ const GoodUpdate = () => {
     UpdateGood(goodId,formData.current).then(res=>{
 
       if(res.data.meta.status===200){
-        navigate('/good')
+        navigate('/goods')
         message.success('商品更新成功')
       }else{
         message.error('商品更新失败')
@@ -250,7 +250,7 @@ const GoodUpdate = () => {
     <div>
       <div>
         <Alert
-          message="添加商品信息"
+          message="更新商品信息"
           banner
           style={{
             textAlign: "center",
@@ -285,7 +285,7 @@ const GoodUpdate = () => {
             },
           ]}
         />
-        <div className={style.contentBox}>
+        <div style={{display:'flex'}}>
           <Steps
             style={{ width: "120px", height: "350px" }}
             progressDot
