@@ -40,6 +40,10 @@ const Home = () => {
     getItem("用户管理", "2", <UploadOutlined />, [
       getItem("用户列表", "2-1", <UserOutlined />),
     ]),
+    getItem("权限管理", "3", <UploadOutlined />, [
+      getItem("角色列表", "3-1", <UserOutlined />),
+      getItem("用户列表", "3-2", <UserOutlined />),
+    ]),
     getItem("商品管理", "4", <VideoCameraOutlined />, [
       getItem("商品列表", "4-1"),
       getItem("分类参数", "4-2"),

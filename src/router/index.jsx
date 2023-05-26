@@ -4,7 +4,8 @@ import Home from "../components/Home.jsx";
 import GoodList from "../components/goods/GoodList.jsx";
 import GoodUpdate from "../components/goods/GoodUpdate.jsx";
 import GoodAdd from "../components/goods/GoodAdd.jsx";
-
+import GoodParam from "../components/goods/GoodParam.jsx";
+import TableTags from "../components/goods/TableTags.jsx";
 export const routes = [
   {
     path: "/",
@@ -22,6 +23,14 @@ export const routes = [
         path: "good/update",
         element: <GoodUpdate></GoodUpdate>,
       },
+      {
+        path:'good/param',
+        element:<GoodParam></GoodParam>
+      },
+      {
+        path:'test',
+        element:<TableTags></TableTags>
+      }
     ],
   },
   {

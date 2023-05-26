@@ -49,12 +49,12 @@ const GoodList = () => {
           <Button
             type="primary"
             icon={<EditTwoTone twoToneColor="white" onClick={handleToUpdta(_.goods_id)} />}
-          ></Button>
+          >编辑</Button>
           <Button
             type="primary"
             danger
             icon={<DeleteTwoTone twoToneColor="white" onClick={()=>showDeleteConfirm(_.goods_id)} />}
-          ></Button>
+          >删除</Button>
         </Space>
       ),
     },
