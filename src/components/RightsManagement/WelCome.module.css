@@ -1,0 +1,15 @@
+.ul li{
+    list-style: none;
+    display: flex;
+    margin-top: 20px;
+}
+.ul{
+    list-style: none;
+        display: flex;
+        margin-top: 20px;
+    justify-content: space-around;
+}
+.icon{
+    font-size: 60px;
+    margin-right: 10px;
+}

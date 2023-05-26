@@ -6,6 +6,8 @@ import PermissionList from '../components/RightsManagement/PermissionList.jsx'
 import GoodList from "../components/goods/GoodList.jsx";
 import GoodUpdate from "../components/goods/GoodUpdate.jsx";
 import GoodAdd from "../components/goods/GoodAdd.jsx";
+import WelCome from "../components/RightsManagement/WelCome.jsx";
+import { element } from "prop-types";
 export const routes=[
     {
         path:'/',
@@ -31,6 +33,10 @@ export const routes=[
             path: "good/update",
             element: <GoodUpdate></GoodUpdate>,
           },
+          {
+            path: 'welcome',
+            element: <WelCome/>
+          }
         ]
     },
     {
