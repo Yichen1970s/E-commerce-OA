@@ -5,7 +5,7 @@ import { Pagination, Breadcrumb, Input, Button, Space, Table, Switch, Popconfirm
 import { SettingOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react'
 //接口
-import { userList, userDelete, userAdd, userSubmit } from "../../api/userList";
+import { userList, userDelete, userAdd, userSubmit, UserRole, userUpdata } from "../../api/userList";
 const { Search } = Input;
 
 
@@ -19,8 +19,10 @@ const UserList = () => {
     const [form] = Form.useForm()//抽屉表单的实例对象
     const [form2] = Form.useForm()//编辑抽屉表单的实例对象
     const [form3] = Form.useForm()//设置抽屉表单的实例对象
-    const [username,setusername]=useState('')
-    const [rolename,setrolename]=useState('')
+    const [username, setusername] = useState('')
+    const [rolename, setrolename] = useState('')
+    const [email,setEmail]=useState('')
+    const [mobile,setMobile]=useState('')
 
 
     const initDate = () => {
@@ -28,12 +30,7 @@ const UserList = () => {
             if (res.status === 200) {
                 //渲染数据到表格
                 // console.log(res.data);
-                console.log(res.data.data);
-                res.data.data.users.forEach((item) => {
-                    console.log(item.username);
-
-                })
-                // console.log(res.data.data.users[1].username);
+                // console.log(res.data.data);
                 setDataSource(res.data.data.users)
             }
         })
@@ -44,13 +41,11 @@ const UserList = () => {
 
     //----------------------------添加用户弹框---------------------
     const onFinish = (values) => {
-        console.log(values);//当前输入的数据
         userAdd(values).then((res) => {
             if (res.data) {
                 initDate()//更新数据 
                 onRest()//重置
                 handleCancel()
-                console.log(res.data);
                 message.success('添加成功')
             }
             else {
@@ -69,14 +64,14 @@ const UserList = () => {
     }
     // --------------------------编辑弹框-----------------------------
     const onFinish2 = (values) => {
-
         console.log('Success:', values);
-        userSubmit(values).then((res) => {
-            console.log(res);
+        userSubmit(userId,{email:values.email,mobile:values.mobile}).then((res) => {
+            // console.log(res);
             if (res.data) {
                 initDate()//更新数据 
                 onRest2()//重置
                 handleCancel2()
+                console.log(res.data);
                 message.success('编辑成功')
             }
             else {
@@ -97,11 +92,13 @@ const UserList = () => {
     // --------------------------设置弹框-----------------------------
     const onFinish3 = (values) => {
         console.log('Success:', values);
-        userCreate(values).then((res) => {
+        UserRole(values).then((res) => {
             if (res.data) {
-                // initDate()//更新数据 
+                console.log(res.data);
+                initDate()//更新数据 
                 onRest3()//重置
                 handleCancel3()
+           
                 message.success('角色分配成功')
             }
             else {
@@ -120,8 +117,25 @@ const UserList = () => {
     }
     //-------------------------------------------------------------------------------
 
-    const onChange = (checked) => {
+    const onChange = (id, data) => {
         // console.log(`switch to ${checked}`);
+        return () => {
+            userUpdata(id, data).then((res) => {
+                if (res.data) {
+                    initDate()//更新数据 
+                    onRest()//重置
+                    handleCancel3()
+                        //  setDataSource(res.data)
+                         console.log(res.data);
+                    message.success('更新用户状态成功')
+                }
+                else {
+                    message.success('更新用户状态失败')
+                }
+              
+            })
+        }
+
     };
     // --------------------点击删除事件---------------------
     const confirm = (id) => {//需要根据id拿到此条信息，然后根据userDelete接口删除数据
@@ -158,26 +172,30 @@ const UserList = () => {
     };
     // ----------------------------------------------------
     //对话框
-    const showModal2 = () => {
-
-        setIsModalOpen2(true);
+    const [userId,setUserId]=useState(0)
+    const showModal2 = (id, data) => {
+        return () => {
+            console.log(data);
+            setUserId(id)
+            setEmail(data.email)
+            setMobile(data.mobile)
+            setusername(data.username)
+            setIsModalOpen2(true);
+        }
     };
 
     const handleCancel2 = () => {
         setIsModalOpen2(false);
     };
-    // --------------------------------------------------
+    // ------------分配角色--------------------------------------
     //对话框
-    const showModal3 = (_,data) => {
-        return ()=>{
-            console.log(_);
-             console.log(data);
-
-             setusername(data.username)
-             setrolename(data.role_name)
-        setIsModalOpen3(true);
+    const showModal3 = (id, data) => {
+        return () => {
+            setusername(data.username)
+            setrolename(data.role_name)
+            setIsModalOpen3(true);
         }
-       
+
     };
 
     const handleCancel3 = () => {
@@ -189,14 +207,15 @@ const UserList = () => {
         {
             title: '序号',
             dataIndex: 'id',
-            key: 'id'
+            key: 'id',
+
+
         },
         {
             title: '姓名',
             dataIndex: 'username',
             key: 'username',
             render: (text) => <a>{text}</a>,
-
         },
         {
             title: '邮箱',
@@ -221,25 +240,25 @@ const UserList = () => {
             dataIndex: 'mg_state',
             key: 'mg_state',
             render: (_, record) => {
-                // console.log(_);
-                // console.log(record);
                 return (
-                    <Switch defaultChecked={_} onChange={onChange} />
+                    <Switch defaultChecked={_} onChange={onChange(record.id, record.mg_state)} />
                 )
             }
 
         },
+
         {
             title: '操作',
             dataIndex: 'operate',
             key: 'operate',
             render: (_, record) => {
-                // console.log(record.username);
+                // console.log(_);
+
                 const disabled = record.username === 'admin' ? true : false
 
                 return (
                     <Space>
-                        <Button type="primary" onClick={showModal2}><EditOutlined /></Button>
+                        <Button type="primary" onClick={showModal2(record.id, record)}><EditOutlined /></Button>
                         <Popconfirm
                             title="操作"
                             description="是否要删除当前用户?"
@@ -251,7 +270,7 @@ const UserList = () => {
                         >
                             <Button type="primary" danger disabled={disabled}><DeleteOutlined /></Button>
                         </Popconfirm>
-                        <Button onClick={showModal3(_,record)} className={style.button3}><SettingOutlined /></Button>
+                        <Button onClick={showModal3(_, record)} className={style.button3}><SettingOutlined /></Button>
                     </Space>
 
                 )
@@ -261,7 +280,9 @@ const UserList = () => {
 
     const onSearch = (e) => {
         console.log(e);//当前输入的信息
-        console.log(username);
+        if (e) {
+
+        }
 
     }
 
@@ -292,14 +313,14 @@ const UserList = () => {
                 />
                 <Button onClick={showModal} type="primary" className={style.addButton}>添加用户</Button>
             </Space>
-            <Table columns={columns} dataSource={dataSource} bordered className={style.table} pagination={false} />
-
+            <Table columns={columns} dataSource={dataSource} bordered className={style.table} />
+            {/* 
             <Pagination
                 total={30}
                 showTotal={(total) => `一共 ${total} 页`}
                 defaultPageSize={5}
                 defaultCurrent={1}
-            />
+            /> */}
             {/* --------------------添加用户弹窗--------------------------- */}
             <Modal title="添加用户" open={isModalOpen} onCancel={handleCancel} footer={null} bodyStyle={{ height: '280px' }}>
                 <Form
@@ -375,15 +396,14 @@ const UserList = () => {
                     onFinishFailed={onFinishFailed2}//提交失败
                     form={form2}
                     style={{ paddingTop: '20px' }}
+
                 >
                     <Form.Item
                         label="用户名"
                         name="username"
-                        rules={[
-                            { required: true, message: '请填写id,不能为空！' }
-                        ]}
+        
                     >
-                        <Input placeholder='admin' />
+                        <Input placeholder={username} disabled={true}/>
                     </Form.Item>
 
                     <Form.Item
@@ -393,7 +413,7 @@ const UserList = () => {
                             { required: true, message: '请选择邮箱！' }
                         ]}
                     >
-                        <Input placeholder='请输入邮箱' />
+                        <Input placeholder={email}/>
                     </Form.Item>
                     <Form.Item
                         label="手机"
@@ -402,7 +422,7 @@ const UserList = () => {
                             { required: true, message: '请选择手机号码！' }
                         ]}
                     >
-                        <Input placeholder='请输入手机号码' />
+                        <Input placeholder={mobile} />
                     </Form.Item>
 
                     <Form.Item wrapperCol={{ offset: 6, span: 18 }} style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '35px' }}>
@@ -433,7 +453,7 @@ const UserList = () => {
                             { required: false }
                         ]}
                     >
-                       
+
                         {username}
                     </Form.Item>
 
