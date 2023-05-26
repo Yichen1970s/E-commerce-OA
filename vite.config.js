@@ -4,16 +4,12 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  css:{
-    modules:{
-      localsConvention:'camelCase'
+  css: {
+    modules: {
+      localsConvention: 'camelCase'
     }
   },
-  resolve: {
-    alias: {
-      // '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  },
+
   server:{
     port:8000,
     proxy:{
@@ -22,6 +18,7 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
-    }
+    },
+    open: true
   }
 })

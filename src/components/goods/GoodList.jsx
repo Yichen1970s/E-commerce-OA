@@ -145,7 +145,7 @@ const GoodList = () => {
   //去更新页面
 const handleToUpdta=(id)=>{
    return ()=>{
-    navigate(`/good/update?id=${id}`)
+    navigate(`/goods/edit?id=${id}`)
    }
 }
   //删除提示框
@@ -189,7 +189,7 @@ const handleToUpdta=(id)=>{
   };
   const navigate=useNavigate()
   const handleMoveToAdd=()=>{
-    navigate('/good/add')
+    navigate('/goods/add')
   }
   return (
     <div>

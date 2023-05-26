@@ -237,7 +237,7 @@ const GoodUpdate = () => {
     UpdateGood(goodId,formData.current).then(res=>{
 
       if(res.data.meta.status===200){
-        navigate('/good')
+        navigate('/goods')
         message.success('商品更新成功')
       }else{
         message.error('商品更新失败')

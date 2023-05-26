@@ -175,7 +175,7 @@ const GoodAdd = () => {
     console.log(formData.current);
     CreateGood(formData.current).then(res=>{
       if(res.data.meta.status===201){
-        navigate('/good')
+        navigate('/goods')
         message.success('商品添加成功')
       }else{
         message.error('商品添加失败')
