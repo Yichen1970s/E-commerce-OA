@@ -23,12 +23,16 @@ const UserUpdate = (id, data) => {
 const UserTree = () => {
     return http.get('rights/tree')
 }
-
+//更新权限
+const UserRoles = (id,data) => {
+    return http.post(`roles/${id}/rights`)
+}
 export {
     RightList,
     UserAdd,
     UserDelete,
     UserInfo,
     UserUpdate,
-    UserTree
+    UserTree,
+    UserRoles
 }

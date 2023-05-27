@@ -9,7 +9,6 @@ export default defineConfig({
       localsConvention: 'camelCase'
     }
   },
-
   server:{
     port:8000,
     proxy:{

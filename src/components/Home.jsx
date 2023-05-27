@@ -34,7 +34,7 @@ const Home = () => {
   }
   const items = [
     getItem('首页', '1', <AppstoreOutlined />, [
-      getItem(<Link to={'/'}>欢迎页</Link>, '1-1'),
+      getItem(<Link to={'welcome'}>欢迎页</Link>, '1-1', <UserOutlined />),
     ]),
     getItem('用户管理', '2', <UploadOutlined />, [
       getItem(<Link to={'users'}>用户列表</Link>, '2-1'),

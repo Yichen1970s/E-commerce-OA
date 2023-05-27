@@ -1,8 +1,8 @@
 import { Button, Space, Table, Modal, Input, Form, message, Tree } from "antd"
 import style from './UserList.module.css'
 import { EditOutlined, DeleteOutlined, SettingOutlined } from '@ant-design/icons';
-import { RightList, UserAdd, UserDelete, UserInfo, UserUpdate, UserTree } from '../../api/Right.js'
-import { useEffect, useState } from "react";
+import { RightList, UserAdd, UserDelete, UserInfo, UserUpdate, UserTree, UserRoles } from '../../api/Right.js'
+import { useEffect, useState, useRef } from "react";
 
 
 const UserList = () => {
@@ -12,12 +12,6 @@ const UserList = () => {
     const [form3] = Form.useForm()
     const [id, setId] = useState(1)
     const [treeData, setTreeData] = useState([])
-    const onSelect = (selectedKeys, info) => {
-        console.log('selected', selectedKeys, info);
-    };
-    const onCheck = (checkedKeys, info) => {
-        console.log('onCheck', checkedKeys, info);
-    };
     const init = () => {
         RightList().then((res) => {
             const resData = res.data.data
@@ -35,7 +29,7 @@ const UserList = () => {
         })
     }
     useEffect(init, [])
-    const userDelete = (text,record) => {
+    const userDelete = (text, record) => {
         return () => {
             console.log(record);
             UserDelete(record.id).then((res) => {
@@ -68,18 +62,18 @@ const UserList = () => {
             title: '操作',
             dataIndex: 'operate',
             key: 'operate',
-            render: (text,record) => {
+            render: (text, record) => {
                 return (
                     <Space >
                         <Button type="primary" icon={<EditOutlined />} onClick={showModal2(text, record)}>编辑</Button>
-                        <Button type='primary' danger icon={<DeleteOutlined />} onClick={userDelete(text,record)}>删除</Button>
-                        <Button type='primary' icon={<SettingOutlined />} style={{ backgroundColor: '#E6A23C' }} onClick={showModal3}>分配权限</Button>
+                        <Button type='primary' danger icon={<DeleteOutlined />} onClick={userDelete(text, record)}>删除</Button>
+                        <Button type='primary' icon={<SettingOutlined />} style={{ backgroundColor: '#E6A23C' }} onClick={showModal3(record.id)}>分配权限</Button>
                     </Space>
-                    
+
                 )
             }
         }
-        
+
     ]
     //编辑角色
     const [isModalOpen2, setIsModalOpen2] = useState(false);
@@ -87,14 +81,14 @@ const UserList = () => {
         return () => {
             UserInfo(record.id).then((res) => {
                 console.log(res.data.data.roleName, res.data.data.roleDesc);
-                const roleName=res.data.data.roleName
+                const roleName = res.data.data.roleName
                 const roleDesc = res.data.data.roleDesc
                 setId(record.id)
                 setIsModalOpen2(true);
                 //回显数据
-                form2.setFieldsValue({ roleName, roleDesc  })
-        }) 
-    }
+                form2.setFieldsValue({ roleName, roleDesc })
+            })
+        }
     };
     const handleOk2 = () => {
         setIsModalOpen2(false);
@@ -107,14 +101,14 @@ const UserList = () => {
     const onFinish2 = (values) => {
         handleOk2()
         onReset2()
-            UserUpdate(id, values).then((res) => {
-                if (res.data) {
-                    message.success('修改成功')
-                    init()
-                } else {
-                    message.error('修改失败')
-                }
-            })    
+        UserUpdate(id, values).then((res) => {
+            if (res.data) {
+                message.success('修改成功')
+                init()
+            } else {
+                message.error('修改失败')
+            }
+        })
     };
     const onFinishFailed2 = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -144,8 +138,8 @@ const UserList = () => {
                 init()
             } else {
                 message.error('添加失败')
-            }       
-        })        
+            }
+        })
     };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -156,11 +150,60 @@ const UserList = () => {
     }
     //分配权限
     const [isModalOpen3, setIsModalOpen3] = useState(false);
-    const showModal3 = () => {
-        setIsModalOpen3(true);
-        UserTree().then((res) => {
-            setTreeData(res.data.data)
-        })
+    const showModal3 = (id) => {
+        return () => {
+            setIsModalOpen3(true);
+            UserTree().then((res) => {
+                // console.log(res.data.data)
+                const resData = res.data.data
+                const newTreeData = []
+                for (let i = 0; i < resData.length; i++) {
+                    newTreeData.push({ title: '', id: '', key: `0-${resData[i].id}`, children: [] })
+                    newTreeData[i].title = resData[i].authName
+                    newTreeData[i].id = resData[i].id
+                    for (let j = 0; j < resData[i].children.length; j++) {
+                        newTreeData[i].children.push({ title: '', id: '', key: `0-0-${resData[i].children[j].id}`, children: [] })
+                        newTreeData[i].children[j].title = resData[i].children[j].authName
+                        newTreeData[i].children[j].id = resData[i].children[j].id
+                        for (let k = 0; k < resData[i].children[j].children.length; k++) {
+                            newTreeData[i].children[j].children.push({ title: '', id: '', key: `0-0-0-${resData[i].children[j].children[k].id}` })
+                            newTreeData[i].children[j].children[k].title = resData[i].children[j].children[k].authName
+                            newTreeData[i].children[j].children[k].id = resData[i].children[j].children[k].id
+                        }
+                    }
+                }
+                // console.log(newTreeData);
+                setTreeData(newTreeData);
+            })
+            console.log(id);
+            setUserId(id)
+        }
+       
+    };
+    const [userId, setUserId] = useState()
+    const roles= useRef({})
+    //多选框触发
+    const onCheck = (checkedKeys, info) => {
+        console.log(info);
+        let rolesData = []
+        if (info.checked === true) {
+            for (let i = 0; i < info.checkedNodes.length; i++) {
+                rolesData.push(info.checkedNodes[i].id)
+            }
+        } else {
+            for (let i = 0; i < info.checkedNodes.length; i++) {
+                rolesData.pop(info.checkedNodes[i].id)
+            }
+            for (let i = 0; i < info.checkedNodes.length; i++) {
+                rolesData.push(info.checkedNodes[i].id)
+            }
+        }
+        let array = rolesData.join(',')
+        let newObj = { rids: array }
+        console.log(newObj);
+        roles.current =newObj
+        console.log(roles.current);
+        
     };
     const handleOk3 = () => {
         setIsModalOpen3(false);
@@ -168,8 +211,12 @@ const UserList = () => {
     const handleCancel3 = () => {
         setIsModalOpen3(false);
     };
-    const onFinish3 = (values) => {
-        
+    const onFinish3 = () => {
+        setIsModalOpen3(false);
+        UserRoles(userId, roles.current).then((res) => {
+            console.log(res);
+            init()
+        })
     };
     const onFinishFailed3 = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -211,13 +258,13 @@ const UserList = () => {
                                 message: '角色名称不能为空',
                             },
                         ]}
-                       
+
                     >
-                        <Input  />
+                        <Input />
                     </Form.Item>
 
                     <Form.Item
-                        style={{ marginTop: '40px', marginBottom:'50px' }}
+                        style={{ marginTop: '40px', marginBottom: '50px' }}
                         label="角色描述"
                         name="roleDesc"
                         rules={[
@@ -227,7 +274,7 @@ const UserList = () => {
                             },
                         ]}
                     >
-                        <Input/>
+                        <Input />
                     </Form.Item>
                     <Form.Item
                         wrapperCol={{
@@ -339,7 +386,6 @@ const UserList = () => {
                         checkable
                         defaultExpandAll
                         defaultExpandParent
-                        onSelect={onSelect}
                         onCheck={onCheck}
                         treeData={treeData}
                     />
