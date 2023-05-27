@@ -37,7 +37,7 @@ const Home = () => {
       getItem(<Link to={'/'}>欢迎页</Link>, '1-1'),
     ]),
     getItem('用户管理', '2', <UploadOutlined />, [
-      getItem('用户列表', '2-1', <UserOutlined />)
+      getItem(<Link to={'users'}>用户列表</Link>, '2-1'),
     ]),
     getItem('权限管理', '3', <UserOutlined />, [
       getItem(<Link to={'roles'}>角色列表</Link>, '3-1'),
@@ -49,7 +49,8 @@ const Home = () => {
       getItem(<Link to={'categories'}>商品分类</Link>, '4-3'),
     ]),
     getItem('订单管理', '5', <AppstoreOutlined />, [
-      getItem('订单列表', '5-1'),
+      getItem(<Link to={'orders'}>订单列表</Link>, '5-1'),
+
     ])
   ]
   return (

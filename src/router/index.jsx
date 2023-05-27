@@ -9,6 +9,8 @@ import GoodAdd from "../components/goods/GoodAdd.jsx";
 import GoodParam from "../components/goods/GoodParam.jsx";
 import TableTags from "../components/goods/TableTags.jsx";
 import GoodCategories from "../components/goods/GoodCategories.jsx";
+import Orders from '../views/Order/Order.jsx'
+import UserLists from "../views/UserList/UserList.jsx";
 export const routes = [
   {
     path: "/",
@@ -43,6 +45,14 @@ export const routes = [
       {
         path: "categories",
         element: <GoodCategories></GoodCategories>,
+      },
+      {
+        path: "users",
+        element: <UserLists></UserLists>,
+      },
+      {
+        path: "orders",
+        element: <Orders></Orders>,
       },
       {
         path: "test",
