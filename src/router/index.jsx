@@ -6,7 +6,7 @@ import PermissionList from "../components/power/PermissionList.jsx";
 import GoodList from "../components/goods/GoodList.jsx";
 import GoodUpdate from "../components/goods/GoodUpdate.jsx";
 import GoodAdd from "../components/goods/GoodAdd.jsx";
-import WelCome from "../components/RightsManagement/WelCome.jsx";
+import WelCome from "../components/power/WelCome.jsx"
 import GoodParam from "../components/goods/GoodParam.jsx";
 import TableTags from "../components/goods/TableTags.jsx";
 import GoodCategories from "../components/goods/GoodCategories.jsx";
